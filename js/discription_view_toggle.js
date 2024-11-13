@@ -9,13 +9,15 @@ let discription_view = $("#discription_view");
 let table_veiw = $("#table_view"); 
 
 
-marker_view_toggle.on("click",  (e)=> { 
-        table_veiw.toggle(); 
+marker_view_toggle.on("click",  (e)=> {
+    const mode = marker_view_toggle.val();
+    const tableVeiwText = "table mode";
+    table_veiw.toggle();
         discription_view.toggle();
-        if(marker_view_toggle.val() == "table mode"){ 
-            marker_view_toggle.val("text mode");  
-        }else { 
-            marker_view_toggle.val("text mode");  
+        if( mode == tableVeiwText){
+            marker_view_toggle.val("text mode");
+        }else {
+            marker_view_toggle.val(tableVeiwText);
 
         }
 });
