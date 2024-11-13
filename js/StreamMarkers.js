@@ -27,7 +27,7 @@ function PrintMarkerData(output, data_name) {
 	}
 
 }
-function makeMarkerTableRow(id, TwitchData, ytData, recordingData){
+function makeMarkerTableRow(id, TwitchData, ytData, recordingData, notes){
     //NOTE: the for attribute technically can only be used on
     //label elements however this is not going to break anything
     let for_attr =`for ="${id}"`;
@@ -121,7 +121,7 @@ function addMarker(notes, d){
         //create a markerObject and add it to the markers
         let marker = {TwitchData,ytData,recordingData, notes};
         markers[id] = marker;
-        makeMarkerTableRow(id, TwitchData, ytData, recordingData);
+        makeMarkerTableRow(id, TwitchData, ytData, recordingData, notes);
 
 		//since we added a marker we need to update them.
         updateMarkers();
