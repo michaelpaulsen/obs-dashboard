@@ -27,7 +27,27 @@ function PrintMarkerData(output, data_name) {
 	}
 
 }
+function makeMarkerTableRow(id, TwitchData, ytData, recordingData){
+    //NOTE: the for attribute technically can only be used on
+    //label elements however this is not going to break anything
+    let for_attr =`for ="${id}"`;
+    //this is the table row for the current marker
+    let tr = $(`<tr id="${id}">`);
+    //this is the remove button
+    let remove = `<input type="button" value = "X" ${for_attr} id = "${id}_remove" class ="remove_marker_btn remove bold">`;
+    //this is the modify button
+    let modify = `<input type="button" value = "C" ${for_attr} id = "${id}_modify" class ="modify_marker_btn modify bold">`;
+    //append everything to the table row for the current marker
+    tr.append(makeTimeCodeTableData("TwitchData", "twttc", TwitchData));
+    tr.append(makeTimeCodeTableData("ytData", "yttc", ytData));
+    tr.append(makeTimeCodeTableData("recordingData", "rectd", recordingData));
+    //TODO(skc): make this modifiable
+    tr.append(`<td class ="notes" >${notes}</td>`)
+    tr.append(`<td>${remove}${modify}</td>`)
+    //append the current row to the table
+    marker_table_body.append(tr);
 
+}
 
 function updateMarkers(){
 	let output = $("#markers_output");
@@ -60,33 +80,32 @@ function addMarker(notes, d){
         //active which means that we don't need check if it is there
         let recordingData = d["adv_file_output"]["timeCode"].split(".")[0];
 
-        //NOTE: it seems that when inactive the twich stream's
-        //output is not in the list of outputs
-        //because of that if it is undefined then
-        //set it to 00:00:00 so that it is not!
+        //NOTE: it seems that when inactive the stream outputs
+        //are not in the list of outputs so we make sure that they are  defined
         if(TwitchData == undefined) {
             TwitchData = "00:00:00";
         }else{
             TwitchData = TwitchData.timeCode.split(".")[0];
         }
-        //the same seems to be true for the YT stream output
         if(ytData == undefined) {
             ytData = "00:00:00";
         }else{
            ytData = ytData.timeCode.split(".")[0]
         }
+
         //if you add an empty note then YT doesn't like it so
         //this sets a default note for the marker if there's not one already
         if(notes == "" || notes == " " ) notes = `misc ${++marker_misc_count}`;
 
         //TODO(skc): move this to its own function
 
-        //TODO(skc): this needs to be better look up the spec for class names
-        //the following code prevents duplicated notes by appending a number
+        //NOTE: the following code prevents duplicated notes by appending a number
         //to the note if it already exists as a marker
         //how I determin that is by checking if the key already exists
         //in the marker object
         let marker_names = Object.keys(markers);
+
+        //TODO(skc): this needs to be better look up the spec for class names
         let id = notes.replace(/\s/gm,"_").replace(/[\s\(\)->]/gm,"");
         let tid = id;
         let itter = 0;
@@ -102,26 +121,8 @@ function addMarker(notes, d){
         //create a markerObject and add it to the markers
         let marker = {TwitchData,ytData,recordingData, notes};
         markers[id] = marker;
-        //TODO(skc): move this to its own function
-        //NOTE: the for attribute technically can only be used on
-        //label elements however this is not going to break anything
-        let for_attr =`for ="${id}"`;
-        //this is the table row for the current marker
-        let tr = $(`<tr id="${id}">`);
-        //this is the remove button
-        let remove = `<input type="button" value = "X" ${for_attr} id = "${id}_remove" class ="remove_marker_btn remove bold">`;
-        //this is the modify button
-        let modify = `<input type="button" value = "C" ${for_attr} id = "${id}_modify" class ="modify_marker_btn modify bold">`;
-        //append everything to the table row for the current marker
-        tr.append(makeTimeCodeTableData("TwitchData", "twttc", TwitchData));
-        tr.append(makeTimeCodeTableData("ytData", "yttc", ytData));
-        tr.append(makeTimeCodeTableData("recordingData", "rectd", recordingData));
-        //TODO(skc): make this modifiable
-        tr.append(`<td class ="notes" >${notes}</td>`)
-        tr.append(`<td>${remove}${modify}</td>`)
+        makeMarkerTableRow(id, TwitchData, ytData, recordingData);
 
-        //append the current row to the table
-        marker_table_body.append(tr);
 		//since we added a marker we need to update them.
         updateMarkers();
 }
@@ -145,14 +146,8 @@ $("#markers").on("click", ".remove_marker_btn", (e)=> {
     updateMarkers();
 })
 
-//NOTE: should probably change this to use the type of the element rather than
-//that its classes
-function isActionBTN(classList){
-    return classList.includes("remove") || classList.includes("modify");
-}
-
 //update the markers when the marker's modify_marker_btn is clicked!
-//NOTE: there has to be a better way to do this
+//FIXME(skc): there has to be a better way to do this
 $("#markers").on("click" , ".modify_marker_btn", (e)=>{
     let self = $(`#${e.target.id}`);
     let target = self.attr("for");
