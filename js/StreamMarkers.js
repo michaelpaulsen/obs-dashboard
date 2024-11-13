@@ -1,43 +1,68 @@
 let markers = {};
-let marker_table_body = $("#markers tbody"); 
-let marker_misc_count = 0; 
-let marker_max_markers_of_same_name = 10; 
-function PrintMarkerData(output, data_name) { 
-    output.append("00:00:00 intro\n");     
-	for(let marker in markers){ 
+let marker_table_body = $("#markers tbody");
+let marker_misc_count = 0;
+let marker_max_markers_of_same_name = 10;
+
+//this is a small helper to make the table creation code more readable
+//SEE: addMarker [this document] =]
+function makeTimeCodeTableData( outterClass, innerClass, value){
+    let ret = `<td class = "${outterClass} data">`;
+    ret += `<input class = "${innerClass}" value = "${value}"/>`;
+    return ret + `</td>`;
+}
+
+//dispays the markers
+function PrintMarkerData(output, data_name) {
+    output.append("00:00:00 intro\n");
+	for(let marker in markers){
 		try{
-            let mk = markers[marker]; 
-            if(mk == null){ 
-                continue; 
+            let mk = markers[marker];
+            if(mk == null){
+                continue;
             }
 			output.append(`${mk[data_name]} ${mk.notes}\n`)
 			} catch(e){
 				continue;
 			}
 	}
-    
-}
-function updateMarkers(){ 
-	let output = $("#markers_output"); 
-	output.empty();
-    output.append("--Twitch--\n"); 
-    PrintMarkerData(output, "TwitchData"); 
-	output.append("--YT--\n"); 
-    PrintMarkerData(output,"ytData");
+
 }
 
+
+function updateMarkers(){
+	let output = $("#markers_output");
+	output.empty();
+    output.append("--Twitch--\n");
+    PrintMarkerData(output, "TwitchData");
+	output.append("--YT--\n");
+    PrintMarkerData(output,"ytData");
+    output.append("--recording--\n");
+    PrintMarkerData(output,"recordingData");
+
+}
+
+//this takes the time code response from the server and makes
+//a marker out of it
+//the server gives a JSON encoded array of output objects
+//the output Objects are in the form {status -> string, timecode -> string}
+//NOTE: status is one of inactive or active and could be used to mark if
+//a stream is active
+
 function addMarker(notes, d){
-		//the server return the inputs as a JSON object of
-        // a list of all of the inpts these are the inputs that we currently add
-        //to our data object
         //NOTE: the name of the output may change this is just the way I have it
         //this may need to be changed for you!
         //TODO: I bet that the name can be determined algorithmicly write
         //write something to do that
         let TwitchData = d["aitum_multi_output_Twitch Output"];
         let ytData = d["adv_stream"];
-        //it seems that when inactive the twich stream's
-        //output is not in the list of outputs if it is undefined then
+
+        //this seems to be the file output this seems to exist even when not
+        //active which means that we don't need check if it is there
+        let recordingData = d["adv_file_output"]["timeCode"].split(".")[0];
+
+        //NOTE: it seems that when inactive the twich stream's
+        //output is not in the list of outputs
+        //because of that if it is undefined then
         //set it to 00:00:00 so that it is not!
         if(TwitchData == undefined) {
             TwitchData = "00:00:00";
@@ -55,6 +80,7 @@ function addMarker(notes, d){
         if(notes == "" || notes == " " ) notes = `misc ${++marker_misc_count}`;
 
         //TODO(skc): move this to its own function
+
         //TODO(skc): this needs to be better look up the spec for class names
         //the following code prevents duplicated notes by appending a number
         //to the note if it already exists as a marker
@@ -74,10 +100,10 @@ function addMarker(notes, d){
         }
 
         //create a markerObject and add it to the markers
-        let marker = {TwitchData,ytData,notes};
+        let marker = {TwitchData,ytData,recordingData, notes};
         markers[id] = marker;
         //TODO(skc): move this to its own function
-        //the for attribute technically can only be used on
+        //NOTE: the for attribute technically can only be used on
         //label elements however this is not going to break anything
         let for_attr =`for ="${id}"`;
         //this is the table row for the current marker
@@ -87,11 +113,13 @@ function addMarker(notes, d){
         //this is the modify button
         let modify = `<input type="button" value = "C" ${for_attr} id = "${id}_modify" class ="modify_marker_btn modify bold">`;
         //append everything to the table row for the current marker
-        tr.append(`<td class = "twitch_data data"><input type="text"  id="${id}_twttc" class ="twttc" value ="${TwitchData}" /> </td>`)
-        tr.append(`<td class = "yt_data data"><input type="text"  id="${id}_yttc" class ="yttc"  value ="${ytData}" /> </td>`)
+        tr.append(makeTimeCodeTableData("TwitchData", "twttc", TwitchData));
+        tr.append(makeTimeCodeTableData("ytData", "yttc", ytData));
+        tr.append(makeTimeCodeTableData("recordingData", "rectd", recordingData));
+        //TODO(skc): make this modifiable
         tr.append(`<td class ="notes" >${notes}</td>`)
-        console.log({remove, modify})
         tr.append(`<td>${remove}${modify}</td>`)
+
         //append the current row to the table
         marker_table_body.append(tr);
 		//since we added a marker we need to update them.
@@ -104,32 +132,37 @@ function addMarker(notes, d){
 
 
 function removeMarker(id){
-   console.log(id); 
     $(`#${id}`).remove();
-    delete markers[id]; 
+    delete markers[id];
 }
 
 
 marker_table_body.empty();
 $("#markers").on("click", ".remove_marker_btn", (e)=> {
     let el = $(`#${e.target.id}`);
-    console.log(e.target.id);  
     let target = el.attr("for");
-    console.log(target); 
-    removeMarker(target); 
-    updateMarkers(); 
+    removeMarker(target);
+    updateMarkers();
 })
-$("#markers").on("click" , ".modify_marker_btn", (e)=>{ 
-    let self = $(`#${e.target.id}`); 
-    let target = self.attr("for"); 
-    let elements = self.parent().parent().children(); 
-    for(let elm  of elements){ 
-        let data_type = elm.classList[0]; 
-        if( data_type =="twitch_data"){ 
-            markers[target].TwitchData = elm.children[0].value;
-        }else if(data_type == "yt_data") {
-            markers[target].ytData = elm.children[0].value; 
+
+//NOTE: should probably change this to use the type of the element rather than
+//that its classes
+function isActionBTN(classList){
+    return classList.includes("remove") || classList.includes("modify");
+}
+
+//update the markers when the marker's modify_marker_btn is clicked!
+//NOTE: there has to be a better way to do this
+$("#markers").on("click" , ".modify_marker_btn", (e)=>{
+    let self = $(`#${e.target.id}`);
+    let target = self.attr("for");
+    let elements = self.parent().parent().children();
+    let mTarget = markers[target];
+    for(let elm  of elements){
+        let data_type = elm.classList[0];
+        if(elm.children[0] !== undefined){
+            mTarget[data_type] = elm.children[0].value;
         }
     }
-    updateMarkers(); 
-})
+    updateMarkers();
+});
