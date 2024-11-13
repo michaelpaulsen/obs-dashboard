@@ -25,47 +25,77 @@ function updateMarkers(){
 	output.append("--YT--\n"); 
     PrintMarkerData(output,"ytData");
 }
-function addMarker(notes, d){ 
-		let TwitchData = d["aitum_multi_output_Twitch Output"];
-		let ytData = d["adv_stream"];
+
+function addMarker(notes, d){
+		//the server return the inputs as a JSON object of
+        // a list of all of the inpts these are the inputs that we currently add
+        //to our data object
+        //NOTE: the name of the output may change this is just the way I have it
+        //this may need to be changed for you!
+        //TODO: I bet that the name can be determined algorithmicly write
+        //write something to do that
+        let TwitchData = d["aitum_multi_output_Twitch Output"];
+        let ytData = d["adv_stream"];
+        //it seems that when inactive the twich stream's
+        //output is not in the list of outputs if it is undefined then
+        //set it to 00:00:00 so that it is not!
         if(TwitchData == undefined) {
             TwitchData = "00:00:00";
-        }else{ 
+        }else{
             TwitchData = TwitchData.timeCode.split(".")[0];
-        } 
+        }
+        //the same seems to be true for the YT stream output
         if(ytData == undefined) {
             ytData = "00:00:00";
-        }else{ 
+        }else{
            ytData = ytData.timeCode.split(".")[0]
         }
-        if(notes == "" || notes == " " ) notes = `misc ${++marker_misc_count}`; 
+        //if you add an empty note then YT doesn't like it so
+        //this sets a default note for the marker if there's not one already
+        if(notes == "" || notes == " " ) notes = `misc ${++marker_misc_count}`;
 
-        let marker_names = Object.keys(markers); 
-        let id = notes.replace(/\s/gm,"_").replace(/[\s\(\)->]/gm,""); 
-        let tid = id; 
-        let itter = 0; 
+        //TODO(skc): move this to its own function
+        //TODO(skc): this needs to be better look up the spec for class names
+        //the following code prevents duplicated notes by appending a number
+        //to the note if it already exists as a marker
+        //how I determin that is by checking if the key already exists
+        //in the marker object
+        let marker_names = Object.keys(markers);
+        let id = notes.replace(/\s/gm,"_").replace(/[\s\(\)->]/gm,"");
+        let tid = id;
+        let itter = 0;
         let resued_name = marker_names.includes(tid) ;
-        console.log({resued_name})
-        if(resued_name) { 
-            while(marker_names.includes(tid)){ 
-                tid = `${id}_${++itter}`; 
-            }
+        if(resued_name) {
+            while(marker_names.includes(tid)){
+                tid = `${id}_${++itter}`;
+            } //this may hang
             id = tid;
             notes = `${notes} ${itter}`;
         }
-        let marker = {TwitchData,ytData,notes}; 
+
+        //create a markerObject and add it to the markers
+        let marker = {TwitchData,ytData,notes};
         markers[id] = marker;
-        let for_attr =`for ="${id}"`; 
-        let tr = $(`<tr id="${id}">`); 
+        //TODO(skc): move this to its own function
+        //the for attribute technically can only be used on
+        //label elements however this is not going to break anything
+        let for_attr =`for ="${id}"`;
+        //this is the table row for the current marker
+        let tr = $(`<tr id="${id}">`);
+        //this is the remove button
         let remove = `<input type="button" value = "X" ${for_attr} id = "${id}_remove" class ="remove_marker_btn remove bold">`;
-        let modify = `<input type="button" value = "C" ${for_attr} id = "${id}_modify" class ="modify_marker_btn modify bold">`; 
+        //this is the modify button
+        let modify = `<input type="button" value = "C" ${for_attr} id = "${id}_modify" class ="modify_marker_btn modify bold">`;
+        //append everything to the table row for the current marker
         tr.append(`<td class = "twitch_data data"><input type="text"  id="${id}_twttc" class ="twttc" value ="${TwitchData}" /> </td>`)
         tr.append(`<td class = "yt_data data"><input type="text"  id="${id}_yttc" class ="yttc"  value ="${ytData}" /> </td>`)
         tr.append(`<td class ="notes" >${notes}</td>`)
         console.log({remove, modify})
         tr.append(`<td>${remove}${modify}</td>`)
-        marker_table_body.append(tr); 
-		updateMarkers();
+        //append the current row to the table
+        marker_table_body.append(tr);
+		//since we added a marker we need to update them.
+        updateMarkers();
 }
 
 
