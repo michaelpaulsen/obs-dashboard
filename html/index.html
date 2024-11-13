@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Skeleton_craft's OBS Websocket Utilities</title>
+		<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+		<style>
+		@import url("/css/main.css");
+		</style>
+	</head>
+	<body>
+		<h1 id="main_header">Skeleton_craft's OBS Websocket Utilities</h1>
+		<div class="content">
+			<h3 id="marker_maker_header">Scene Markers</h3>
+			<div id="marker_maker_content">
+				<label for="discription">Marker Discription</label><br />
+				<input id="discription" />
+				<input type = "button" id="btn_add_marker" value ="Create Marker" /> 
+				<select id="tags_type">
+					<option value="GTNH"> GTNH </option>
+				</select>
+				<hr />
+				<input type="button" value="table mode" id="stream_marker_discription_table_toggle" class="toggle mode1">
+				<div id="discription_view">
+					<textarea cols = "60" id="markers_output" disabled> </textarea>
+					
+				</div>
+				<div id="table_view" hidden>
+					<table id="markers" class="mono bold" >
+						<thead>
+							<tr> 
+								<td><span class="twitch">twitch</span> time code</td>
+								<td><span class="yt">youtube</span> time code</td>
+								<td>discription</td>
+								<td>action</td></tr>
+						</thead>
+						<tbody>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<h3 id="scene_transiton_header">Automated Scene Transiton</h3>
+			<div id="scene_transiton_content">
+				<label for="to_scene"> Scene To Jump To </label><br />
+				<select id="to_scene"></select> <br/> 
+				<input type="button" value="refesh scene colection" id="refesh_scene_colection"/>
+				
+				<!--auto filled with your scene collections-->
+				<br />
+				<label for="reason"> Scene Text</label> <br />
+				<textarea id="reason">brb</textarea> <br />
+				<input type = "button" id="change_scene" value = "GO" />
+			</div>
+			<hr/>
+			<div id="wl_textchange_section">
+				<h3 id="wl_textchange_header">
+					win loss text change
+				</h3>
+				<p>
+					<input type="button" value="Hide" id="wl_toggle">
+				</p>
+				<div id="wl_text_change_content" class="content">
+					<div id="wl_textchage_contorols">
+						<input type = "button" id="wl_win" value = "win"/>
+						<input type = "button" id="wl_loss"value = "loss"/>
+						<input type = "button" id="wl_reset"value = "reset"/>
+					</div>
+					<div id="wl_textchage_client_display_conainter">
+						<p id="wl_text"></p>
+					</div>
+				</div>
+			</div>
+		</div>
+		 <script src="/js/utils.js"></script>
+		<script src="/js/StreamMarkers.js"></script>
+		
+		<script src="/js/discription_view_toggle.js"></script>
+		<script src="/js/main.js"></script>
+		<script>
+		
+		</script>
+	</body>
+</html>

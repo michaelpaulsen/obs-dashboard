@@ -1,0 +1,42 @@
+$theme_background:#444; 
+$theme_light : #777; 
+$theme_dark : #5a5a5a; 
+$theme_text_color : #b3bcbb;
+
+
+body {
+    background-color: $theme_background;
+    color: $theme_text_color;
+    font-family: sans-serif;
+}
+
+table{
+    
+    border: #777 solid 2px;
+    text-align: center;
+    thead { 
+        background-color: $theme_light;
+    }
+    tbody tr{
+        
+        &:nth-child(even){ 
+            background-color: $theme_light;
+        }
+        &:nth-child(odd){ 
+            background-color: $theme_dark;
+        }
+    
+    }
+}
+input, textarea, select {
+    outline-style: none;
+    background-color : #aaa;
+}
+textarea {
+    color:black;
+}
+.warn{
+    color:rgb(195, 195, 47);
+    text-decoration: underline;
+    font-weight: bolder;
+}

@@ -1,0 +1,36 @@
+body {
+  background-color: #444;
+  color: #b3bcbb;
+  font-family: sans-serif;
+}
+
+table {
+  border: #777 solid 2px;
+  text-align: center;
+}
+table thead {
+  background-color: #777;
+}
+table tbody tr:nth-child(even) {
+  background-color: #777;
+}
+table tbody tr:nth-child(odd) {
+  background-color: #5a5a5a;
+}
+
+input, textarea, select {
+  outline-style: none;
+  background-color: #aaa;
+}
+
+textarea {
+  color: black;
+}
+
+.warn {
+  color: rgb(195, 195, 47);
+  text-decoration: underline;
+  font-weight: bolder;
+}
+
+/*# sourceMappingURL=main.css.map */
