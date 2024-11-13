@@ -25,8 +25,8 @@ $("#change_scene").on("click", () => {
 			reason
 		},
 		success: (d) => {
-			addMarker(`${reason} (${prev} -> ${target})`, d);
 			prev = target; 
+			addMarker(`${reason} (${prev} to ${target})`, d);
 
 		},
 		method: "GET",
