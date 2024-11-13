@@ -25,9 +25,8 @@ $("#change_scene").on("click", () => {
 			reason
 		},
 		success: (d) => {
-			addMarker(`${reason} (${prev} to ${target})`, d);
-			prev = target;
-
+			console.log(d);
+			addMarker(`${reason} (${d["currentScene"]} to ${target})`, d["timeCodes"]);
 		},
 		method: "GET",
 	});

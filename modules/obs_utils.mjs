@@ -79,11 +79,15 @@ async function getcurrentTransition(res,obs){
 		return false; 
 	}
 }
-export let obs = { 
+async function GetSceneCollectionList(obs){
+	return await obs.call("GetSceneCollectionList");
+}
+export let obs = {
     ChangeSceneCollection,
     centertoScreen,
     filterOutPutList,
     changeScene,
     GetOutputList,
-    getcurrentTransition
+    getcurrentTransition,
+	GetSceneCollectionList
 }

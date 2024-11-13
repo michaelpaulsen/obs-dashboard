@@ -122,11 +122,8 @@ createServer(async function (req, res) {
 		changeText(res, get["target"], get["text"]); 
 		return;  
 	}
-	//changes the scene collection to get.scene and changes the the input named 
-	// reason text to get.reason
-	// expects get -> target
-	//         get -> reason 
 	if(subdir == "mtg_win") { 
+
 		++mtg_stats.wins;
 		mtg_update(res);
 		
@@ -138,39 +135,47 @@ createServer(async function (req, res) {
 		return;  
 
 	}
+	//changes the scene collection to get.scene and changes the the input named
+	// reason text to get.reason
+	// expects get -> target
+	//         get -> reason
 	if (subdir == "changeSceneCollection") {
 		let inputname = "reason text";
-		let insettings = {}; 
-		let si; 
-		if(!await connect(res)) { 
+		let insettings = {};
+		let si;
+
+		if(!await connect(res)) {
 			console.error(`${subdir} unable to connect obs`);
 			return;
-		
-		}
-		let ct = await skcUtils.obs.getcurrentTransition(res,obs); 
-		let transitionms = 1200; 
+}
+		let sc = await skcUtils.obs.GetSceneCollectionList(obs) ;
+		let timeCodes = await getTimeCodes(res, obs);
+		let currentScene = sc["currentSceneCollectionName"];
+		let data = {timeCodes, currentScene};
+		let ct = await skcUtils.obs.getcurrentTransition(res,obs);
+		let transitionms = 1200;
 
-		 if(!skcUtils.obs.ChangeSceneCollection(res,obs,get["target"])) return;
-		 setTimeout(
-		 	async (e)=>{
+		if(!skcUtils.obs.ChangeSceneCollection(res,obs,get["target"])) return;
+			setTimeout(
+			async (e)=>{
 				try {
 					let { inputSettings } = await obs.call("GetInputSettings", {
 						inputName: inputname,
 					});
-					try { 
-						insettings =inputSettings; 
+					try {
+						insettings =inputSettings;
 						insettings.text = `${get["reason"]}`;
 						await obs.call("SetInputSettings", {
 							inputName: inputname,
 							inputSettings: insettings,
 						});
-					} catch(e){ 
+					} catch(e){
 					}
-		
-				} catch(e){ 
+
+				} catch(e){
 				}
-		 		setTimeout( async ()=> { 
-					try{ 
+				setTimeout( async ()=> {
+					try{
 						let { sceneItems } = await obs.call("GetSceneItemList", {
 								sceneName: skc_settings.defaultSceneName,
 							});
@@ -178,22 +183,21 @@ createServer(async function (req, res) {
 							if (sceneItm["sourceName"] === inputname) {
 								si = sceneItm;
 							}
-							
+
 						}
-						await skcUtils.obs.centertoScreen(res, obs, skc_settings.defaultSceneName, si); 
+						await skcUtils.obs.centertoScreen(res, obs, skc_settings.defaultSceneName, si);
 						await skcUtils.obs.changeScene(res, obs, skc_settings.defaultSceneName);
-					} catch(e){ 
+					} catch(e){
 					}
-					
-					let data = await getTimeCodes(res, obs);
+
+
 					await disconnect();
 					if(data) {
 						res.writeHead(200, { "Content-Type": "application/json" });
 						res.end(JSON.stringify(data));
 					}
 				}, transitionms)
-			}, transitionms); 
-			
+			}, transitionms);
 		return;
 	}
 	//gets the scene collection list 
