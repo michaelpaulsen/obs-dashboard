@@ -21,9 +21,9 @@ function PrintMarkerData(output, data_name) {
                 continue;
             }
 			output.append(`${mk[data_name]} ${mk.notes}\n`)
-			} catch(e){
-				continue;
-			}
+		} catch(e){
+			continue;
+		}
 	}
 
 }
@@ -69,62 +69,60 @@ function updateMarkers(){
 //a stream is active
 
 function addMarker(notes, d){
-        //NOTE: the name of the output may change this is just the way I have it
-        //this may need to be changed for you!
-        //TODO: I bet that the name can be determined algorithmicly write
-        //write something to do that
-        let TwitchData = d["aitum_multi_output_Twitch Output"];
-        let ytData = d["adv_stream"];
+    //NOTE: the name of the output may change this is just the way I have it
+    //this may need to be changed for you!
+    //TODO: I bet that the name can be determined algorithmicly write
+    //write something to do that
+    let TwitchData = d["aitum_multi_output_Twitch Output"];
+    let ytData = d["adv_stream"];
 
-        //this seems to be the file output this seems to exist even when not
-        //active which means that we don't need check if it is there
-        let recordingData = d["adv_file_output"]["timeCode"].split(".")[0];
+    //this seems to be the file output this seems to exist even when not
+    //active which means that we don't need check if it is there
+    let recordingData = d["adv_file_output"]["timeCode"].split(".")[0];
 
-        //NOTE: it seems that when inactive the stream outputs
-        //are not in the list of outputs so we make sure that they are  defined
-        if(TwitchData == undefined) {
-            TwitchData = "00:00:00";
-        }else{
-            TwitchData = TwitchData.timeCode.split(".")[0];
-        }
-        if(ytData == undefined) {
-            ytData = "00:00:00";
-        }else{
-           ytData = ytData.timeCode.split(".")[0]
-        }
+    //NOTE: it seems that when inactive the stream outputs
+    //are not in the list of outputs so we make sure that they are  defined
+    if(TwitchData == undefined) {
+        TwitchData = "00:00:00";
+    }else{
+        TwitchData = TwitchData.timeCode.split(".")[0];
+    }
+    if(ytData == undefined) {
+        ytData = "00:00:00";
+    }else{
+        ytData = ytData.timeCode.split(".")[0]
+    }
 
-        //if you add an empty note then YT doesn't like it so
-        //this sets a default note for the marker if there's not one already
-        if(notes == "" || notes == " " ) notes = `misc ${++marker_misc_count}`;
+    //if you add an empty note then YT doesn't like it so
+    //this sets a default note for the marker if there's not one already
+    if(notes == "" || notes == " " ) notes = `misc ${++marker_misc_count}`;
 
-        //TODO(skc): move this to its own function
+    //TODO(skc): move this to its own function
 
-        //NOTE: the following code prevents duplicated notes by appending a number
-        //to the note if it already exists as a marker
-        //how I determin that is by checking if the key already exists
-        //in the marker object
-        let marker_names = Object.keys(markers);
+    //NOTE: the following code prevents duplicated notes by appending a number
+    //to the note if it already exists as a marker
+    //how I determin that is by checking if the key already exists
+    //in the marker object
+    let marker_names = Object.keys(markers);
+    let id = notes.replace(/\s/gm, "_").replace(/[^_A-Za-z\d]/gm, "");
+    let tid = id;
+    let itter = 0;
+    let resued_name = marker_names.includes(tid) ;
+    if(resued_name) {
+        while(marker_names.includes(tid)){
+            tid = `${id}_${++itter}`;
+        } //this may hang
+        id = tid;
+        notes = `${notes} ${itter}`;
+    }
 
-        //TODO(skc): this needs to be better look up the spec for class names
-        let id = notes.replace(/\s/gm,"_").replace(/[\s\(\)->]/gm,"");
-        let tid = id;
-        let itter = 0;
-        let resued_name = marker_names.includes(tid) ;
-        if(resued_name) {
-            while(marker_names.includes(tid)){
-                tid = `${id}_${++itter}`;
-            } //this may hang
-            id = tid;
-            notes = `${notes} ${itter}`;
-        }
+    //create a markerObject and add it to the markers
+    let marker = {TwitchData,ytData,recordingData, notes};
+    markers[id] = marker;
+    makeMarkerTableRow(id, TwitchData, ytData, recordingData, notes);
 
-        //create a markerObject and add it to the markers
-        let marker = {TwitchData,ytData,recordingData, notes};
-        markers[id] = marker;
-        makeMarkerTableRow(id, TwitchData, ytData, recordingData, notes);
-
-		//since we added a marker we need to update them.
-        updateMarkers();
+    //since we added a marker we need to update them.
+    updateMarkers();
 }
 
 
