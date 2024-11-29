@@ -13,6 +13,8 @@ function makeTimeCodeTableData( outterClass, innerClass, value){
 
 //dispays the markers
 function PrintMarkerData(output, data_name) {
+    //YT requires that the first chapter starts at 00:00:00 so
+    //I append the special case so that it is always on top.
     output.append("00:00:00 intro\n");
 	for(let marker in markers){
 		try{
@@ -72,9 +74,13 @@ function addMarker(notes, d){
     //NOTE: the name of the output may change this is just the way I have it
     //this may need to be changed for you!
     //TODO: I bet that the name can be determined algorithmicly write
-    //write something to do that
+    //write something to do that or at least make a config for this...
     let TwitchData = d["aitum_multi_output_Twitch Output"];
     let ytData = d["adv_stream"];
+
+    //NOTE: the time code format is in HH:MM:SS.ff we don't want the
+    //sub-second frame data so we split on . and only take the first value
+
 
     //this seems to be the file output this seems to exist even when not
     //active which means that we don't need check if it is there
@@ -124,11 +130,6 @@ function addMarker(notes, d){
     //since we added a marker we need to update them.
     updateMarkers();
 }
-
-
-
-
-
 
 function removeMarker(id){
     $(`#${id}`).remove();
