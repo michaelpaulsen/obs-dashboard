@@ -206,9 +206,9 @@ createServer(async function (req, res) {
 			return;
 		}
 		try {
-				let sc = await obs.call("GetSceneCollectionList");
-				sceneCollections = sc; 
-
+			let sc = await skcUtils.obs.GetSceneCollectionList(obs);
+			console.log(sc);
+			sceneCollections = sc;
 			await disconnect();
 		} catch (e) {
 			console.error(e);
