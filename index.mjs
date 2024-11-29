@@ -4,15 +4,15 @@ import {skc_settings} from "./modules/settings.mjs"
 import {skcUtils}from "./modules/util.mjs"
 import { File_utils} from "./modules/readFile.mjs";
 let base = `file://${import.meta.dirname}`;
-let mtg_stats = { 
+let mtg_stats = {
 	wins: 0,
 	losses : 0
 }
 
-async function changeText(res,target,  text) { 
+async function changeText(res,target,  text) {
 	if(!await connect(res)){
-		return; 
-	} 
+		return;
+	}
 	try {
 		let { inputSettings } = await obs.call("GetInputSettings", {
 			inputName: target,
@@ -24,30 +24,30 @@ async function changeText(res,target,  text) {
 		});
 		await disconnect();
 		return;
-	} 
-	catch(e) { 
+	}
+	catch(e) {
 		skcUtils.json_error(res, JSON.stringify(e));
 	}
-	return; 
+	return;
 }
-function mtg_update(res) { 
+function mtg_update(res) {
 	let total = mtg_stats.wins + mtg_stats.losses;
 	let winpercent  = Math.round(100 * (100*(mtg_stats.wins/total)))/100;
-	let losspercent = 100 - winpercent;   
+	let losspercent = 100 - winpercent;
 	let text = `${mtg_stats.wins}-${mtg_stats.losses} (${total})\n`;
 	text +=  `${winpercent}% - ${losspercent}%`
-	changeText(res,"wl text", text); 
+	changeText(res,"wl text", text);
 	try {
 		res.writeHead(200,{"content-type" : "text/json"});
 		res.end(JSON.stringify(mtg_stats))
-	}catch(e){ }; 
+	}catch(e){ };
 }
 //the OBS websocket connection object
 const obs = new OBSWebSocket();
-let connected =false; 
+let connected =false;
 
 
-async function getTimeCodes(res, obs){ 
+async function getTimeCodes(res, obs){
 	let outputs = (await skcUtils.obs.GetOutputList(res,obs)).outputs;
 	let tc = {};
 	for(let output of outputs){
@@ -72,31 +72,31 @@ async function getTimeCodes(res, obs){
 		return false;
 
 	}
-	return tc; 
+	return tc;
 }
-async function connect(res){ 
+async function connect(res){
 	if(connected)
 	 {
 		console.log('allready connected')
 		return true;
-	 }  
+	 }
 	try {
 
 		await obs.connect("ws://127.0.0.1:4455", skc_settings.OBS_PASSWORD, {
 			rpcVersion: 1,
-		});	
-		connected =true; 
-		return true; 
+		});
+		connected =true;
+		return true;
 	} catch(e){
-		
-		connected = false; 
-		skcUtils.json_error(res, `unable to connect to obs ${JSON.stringify(e).replace(/"/gm, "`")}`); 
-		return false; 
+
+		connected = false;
+		skcUtils.json_error(res, `unable to connect to obs ${JSON.stringify(e).replace(/"/gm, "`")}`);
+		return false;
 	}
 }
 
-async function disconnect(){ 
-	connected = false; 
+async function disconnect(){
+	connected = false;
 	await obs.disconnect();
 }
 
@@ -106,33 +106,31 @@ createServer(async function (req, res) {
 	//see the utils modual
 	let get = skcUtils.parseQueryString(search);
 
-	
+
 	//is the root of this mjs file
-	let subdir = skcUtils.getSubDir(req); 
+	let subdir = skcUtils.getSubDir(req);
 
 
-	//for now if the client requests the favicon then 
-	//ignore the request 
+	//for now if the client requests the favicon then
+	//ignore the request
 	//TODO: add favicon support
-		
 	//changes the target text source's text
-	//expects get -> target 
+	//expects get -> target
 	//        get -> text
 	if(subdir == 'textChange') {
-		changeText(res, get["target"], get["text"]); 
-		return;  
+		changeText(res, get["target"], get["text"]);
+		return;
 	}
-	if(subdir == "mtg_win") { 
 
+	if(subdir == "mtg_win") {
 		++mtg_stats.wins;
 		mtg_update(res);
-		
-		return;  
+		return;
 	}
-	if(subdir == "mtg_loss") { 
+	if(subdir == "mtg_loss") {
 		++mtg_stats.losses;
 		mtg_update(res);
-		return;  
+		return;
 
 	}
 	//changes the scene collection to get.scene and changes the the input named
@@ -200,11 +198,10 @@ createServer(async function (req, res) {
 			}, transitionms);
 		return;
 	}
-	//gets the scene collection list 
+	//gets the scene collection list
 	if (subdir == "GSC") {
 		let sceneCollections;
-		if(!await connect(res)){ 
-			
+		if(!await connect(res)){
 			console.error(`${subdir} unable to connect obs`);
 			return;
 		}
@@ -214,19 +211,19 @@ createServer(async function (req, res) {
 
 			await disconnect();
 		} catch (e) {
-			console.error(e); 
-			let jserror = JSON.stringify(e).replace(/"/gm,"`"); 
+			console.error(e);
+			let jserror = JSON.stringify(e).replace(/"/gm,"`");
 			skcUtils.json_error(res,`unable to get SceneColection ${jserror}`);
-			return;  
+			return;
 		}
 
-		let jsn_resp; 
-		try{ 
-			jsn_resp = JSON.stringify(sceneCollections); 
+		let jsn_resp;
+		try{
+			jsn_resp = JSON.stringify(sceneCollections);
 
 		} catch(e){
 			json_error(res, "-- internal server error -- \n unreachable error");
-			process.abort(); 
+			process.abort();
 		}
 		res.writeHead(200, { "Content-Type": "application/json" });
 		res.write(jsn_resp);
@@ -252,13 +249,13 @@ createServer(async function (req, res) {
 
 	}
 
-	//if we get to this point then we're not processing an API end point so the 
+	//if we get to this point then we're not processing an API end point so the
 	//client must be requesting content
 	//since I know the layout of the app, for security resons I can check for the sub dir
 	//rather than just allowing everything in
-	File_utils.handleContentRequest(res,req, base); 
+	File_utils.handleContentRequest(res,req, base);
 
-	
+
 }).on('connection', function(socket) {
 	socket.setTimeout(3000);
 }).listen(8080);
@@ -272,16 +269,16 @@ createServer( (req,res)=> {
 
 	//is the top level subdir of the request
 	let subdir = req.url.split("/")[1];
-	let rurl = req.url; 
+	let rurl = req.url;
 	if(subdir == "winlossState"){
 		res.writeHead(200,{"content-type" : "text/json"})
 		res.end(JSON.stringify(mtg_stats));
-		return; 
+		return;
 
 	}
-	try{ 
-		File_utils.handleContentRequest(res,req,base, 2); 
+	try{
+		File_utils.handleContentRequest(res,req,base, 2);
 
 	} catch(e){ }
-	return; 
-}).listen(8081); 
+	return;
+}).listen(8081);
