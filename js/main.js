@@ -1,12 +1,5 @@
-let prev = "unknown";
 let t, render=true;
-let playbtnDefault = $("#record_pause_btn").val();
-let recordingState = "Inactive";
-let writingState = "Inactive";
 const PPBTN = $("#record_pause_btn");
-let framerate =30, ff =0, ss =0,mm =0,hh =0, interval, inttime = 1000/framerate, gfc =0;
-let recSymToggles = 0, paused =false;
-let colorRecBTN = false, colorPauseBTN =true;
 
 $("#btn_add_marker").on("click", () => {
 	$.get("/addMarker", (d) => {
