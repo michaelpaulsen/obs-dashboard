@@ -29,7 +29,8 @@ function PrintMarkerData(output, data_name) {
 	}
 
 }
-function makeMarkerTableRow(id, TwitchData, ytData, recordingData, notes){
+function makeMarkerTableRow(id, TwitchData, ytData, recordingData,
+                            ytVerticalStream, notes){
     //NOTE: the for attribute technically can only be used on
     //label elements however this is not going to break anything
     let for_attr =`for ="${id}"`;
@@ -43,6 +44,7 @@ function makeMarkerTableRow(id, TwitchData, ytData, recordingData, notes){
     tr.append(makeTimeCodeTableData("TwitchData", "twttc", TwitchData));
     tr.append(makeTimeCodeTableData("ytData", "yttc", ytData));
     tr.append(makeTimeCodeTableData("recordingData", "rectd", recordingData));
+    tr.append(makeTimeCodeTableData("ytVerticalStream", "vstreamData", ytVerticalStream));
     //TODO(skc): make this modifiable
     tr.append(`<td class ="notes" ><input value ="${notes}"/></td>`)
     tr.append(`<td>${remove}${modify}</td>`)
@@ -56,8 +58,10 @@ function updateMarkers(){
 	output.empty();
     output.append("--Twitch--\n");
     PrintMarkerData(output, "TwitchData");
-	output.append("--YT--\n");
+	output.append("--YT Long stream--\n");
     PrintMarkerData(output,"ytData");
+    output.append("--YT Shorts Stream--\n");
+    PrintMarkerData(output,"ytVerticalStream");
     output.append("--recording--\n");
     PrintMarkerData(output,"recordingData");
 
@@ -75,8 +79,10 @@ function addMarker(notes, d){
     //this may need to be changed for you!
     //TODO: I bet that the name can be determined algorithmicly write
     //write something to do that or at least make a config for this...
+    let ytVerticalStream = d["vertical_canvas_stream_YT_shorts"];
     let TwitchData = d["aitum_multi_output_Twitch Output"];
     let ytData = d["adv_stream"];
+
 
     //NOTE: the time code format is in HH:MM:SS.ff we don't want the
     //sub-second frame data so we split on . and only take the first value
@@ -88,6 +94,9 @@ function addMarker(notes, d){
 
     //NOTE: it seems that when inactive the stream outputs
     //are not in the list of outputs so we make sure that they are  defined
+    if(ytVerticalStream == undefined){
+        ytVerticalStream  = { timeCode : "00:00:00"};
+    }
     if(TwitchData == undefined) {
         TwitchData = { timeCode : "00:00:00"};
     }
@@ -95,6 +104,7 @@ function addMarker(notes, d){
         ytData = { timeCode : "00:00:00"};
     }
 
+    ytVerticalStream = ytVerticalStream.timeCode.split(".")[0];
     TwitchData = TwitchData.timeCode.split(".")[0];
     ytData = ytData.timeCode.split(".")[0]
 
@@ -122,9 +132,9 @@ function addMarker(notes, d){
     }
 
     //create a markerObject and add it to the markers
-    let marker = {TwitchData,ytData,recordingData, notes};
+    let marker = {TwitchData,ytData,recordingData, ytVerticalStream, notes};
     markers[id] = marker;
-    makeMarkerTableRow(id, TwitchData, ytData, recordingData, notes);
+    makeMarkerTableRow(id, TwitchData, ytData, recordingData, ytVerticalStream, notes);
 
     //since we added a marker we need to update them.
     updateMarkers();
