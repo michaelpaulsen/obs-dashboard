@@ -89,15 +89,14 @@ function addMarker(notes, d){
     //NOTE: it seems that when inactive the stream outputs
     //are not in the list of outputs so we make sure that they are  defined
     if(TwitchData == undefined) {
-        TwitchData = "00:00:00";
-    }else{
-        TwitchData = TwitchData.timeCode.split(".")[0];
+        TwitchData = { timeCode : "00:00:00"};
     }
     if(ytData == undefined) {
-        ytData = "00:00:00";
-    }else{
-        ytData = ytData.timeCode.split(".")[0]
+        ytData = { timeCode : "00:00:00"};
     }
+
+    TwitchData = TwitchData.timeCode.split(".")[0];
+    ytData = ytData.timeCode.split(".")[0]
 
     //if you add an empty note then YT doesn't like it so
     //this sets a default note for the marker if there's not one already
