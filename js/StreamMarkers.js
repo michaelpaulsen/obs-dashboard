@@ -45,7 +45,6 @@ function makeMarkerTableRow(id, TwitchData, ytData, recordingData,
     tr.append(makeTimeCodeTableData("ytData", "yttc", ytData));
     tr.append(makeTimeCodeTableData("recordingData", "rectd", recordingData));
     tr.append(makeTimeCodeTableData("ytVerticalStream", "vstreamData", ytVerticalStream));
-    //TODO(skc): make this modifiable
     tr.append(`<td class ="notes" ><input value ="${notes}"/></td>`)
     tr.append(`<td>${remove}${modify}</td>`)
     //append the current row to the table
