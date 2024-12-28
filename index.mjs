@@ -111,9 +111,7 @@ createServer(async function (req, res) {
 	let subdir = skcUtils.getSubDir(req);
 
 
-	//for now if the client requests the favicon then
-	//ignore the request
-	//TODO: add favicon support
+
 	//changes the target text source's text
 	//expects get -> target
 	//        get -> text
@@ -249,10 +247,6 @@ createServer(async function (req, res) {
 
 	}
 
-	//if we get to this point then we're not processing an API end point so the
-	//client must be requesting content
-	//since I know the layout of the app, for security resons I can check for the sub dir
-	//rather than just allowing everything in
 	File_utils.handleContentRequest(res,req, base);
 
 

@@ -75,40 +75,49 @@ async function fetchCSS(res, pathstr, base){
 }
 
 
-function handleContentRequest( res, req, base, mode = 1){ 
+function handleContentRequest( res, req, base, mode = 1){
 	let url = req.url;
-	if(req.url == "/") url = "/html/index.html";  
-	let subdir = skcUtils.getSubDir(req); 
-	try{
-		subdir = skcUtils.getSubDir(req); 
-	}catch(e){
-		skcUtils.debug.dbgTrace(e);
-		fetchHtml(res,"/index.html",base);
-		return;  
+	// if url is just a directory assume that they are looking for
+	//that dir's index page
+	if(req.url == "/") {
+		if(mode == 1) {
+			url = "html/index.html";
+		}else{
+			url = "html/graph.html"
+		}
 	}
+
+	let subdir = skcUtils.getSubDir(req);
+	//NOTE (skc) : this may throw? I used to have this in a try catch block...
 	if (subdir == "js") {
 		File_utils.fetchJavaScript(res,`${url}`,base);
 		return;
 	}
-	if(subdir == "css" || subdir == "style") { 
+
+	if(subdir == "css" || subdir == "style") {
 		fetchCSS(res, url, base);
-		return;   
+		return;
 	}
+	//since this is a development enviroment this we are
+	//never returning content in this block
+	//TODO(skc): add favicon support
 	if (req.url == "favicon.ico") {
 		res.writeHead(200, { "content-type": "image/icon" });
 		res.end();
 		return;
 	}
-	url = "html/"; 
-	if(url.at(-1)== "/"){
-		if(mode == 1) { 
-			url += "index.html";
-		}else{ 
-			url += "graph.html"
-		}
-	}
 
-	fetchHtml(res,`${url}`, base); 
+
+	//if we're at this point it is safe to assume that the request is looking
+	//html content... I have 2 different servers that share this codebase ATM
+	//[see main.mjs] so one is the primary index for the main server the second
+	//is the other...
+
+
+	if(mode == 1) {
+		url = "html/index.html";
+	}else{
+		url = "html/graph.html"
 	return
 }
 
