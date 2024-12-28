@@ -1,26 +1,10 @@
-function makeID(str){ 
-    
-    if(str[0] !== '#') { 
-        return `#${str}`; 
+//takes an arbitrary string and makes it a CSS Id selector by adding a #
+//to the front if there's not one already
+function makeID(str){
+    if(str[0] !== '#') {
+        return `#${str}`;
     }
-    return str; 
-}
-
-function toggle(Jqueryel, state1, state2){ 
-    let val = Jqueryel.val();
-        if(val.toLowerCase() === state1.toLowerCase()){ 
-            Jqueryel.val(state2);
-            return true; 
-        }
-        else { 
-            Jqueryel.val(state1);
-            return false; 
-        }
-        //assumes that the first state is the true state. 
-}
-
-function roundp(value, power){ 
-	return Math.floor(value*Math.pow(10,power))/Math.pow(10,power); 
+    return str;
 }
 
 

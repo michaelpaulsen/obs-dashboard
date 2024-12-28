@@ -72,6 +72,9 @@ function updateMarkers(){
 //the output Objects are in the form {status -> string, timecode -> string}
 //NOTE: status is one of inactive or active and could be used to mark if
 //a stream is active
+//NOTE : making a fork of this that does that may be a good starting project
+//but rn I don't plan on adding that...
+
 
 function addMarker(notes, d){
     //NOTE: the name of the output may change this is just the way I have it

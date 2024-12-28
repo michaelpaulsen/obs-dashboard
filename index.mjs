@@ -22,7 +22,8 @@ async function changeText(res,target,  text) {
 		return;
 	}
 	catch(e) {
-		skcUtils.json_error(res, JSON.stringify(e));
+		console.error(e);
+
 	}
 	return;
 }
