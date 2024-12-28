@@ -28,14 +28,14 @@ async function fetchJavaScript(res, pathstr, base){
 export async function fetchHtml(res, pathstr, base ){
 	let contents = await getFileContent(`${base}/${pathstr}`);
 	if(contents !== false){
-		try { 
+		try {
 			res.writeHead(200, { "Content-Type": "text/html" });
 			res.write(contents);
 			res.end();
-		return;
-	} catch (e) { 
+			return;
+		} catch (e) {
 
-	}
+		}
 	}
 	try{
 
@@ -58,7 +58,7 @@ export async function fetchHtml(res, pathstr, base ){
 	}
 
 }
-async function fetchCSS(res, pathstr, base){ 
+async function fetchCSS(res, pathstr, base){
 	let contents = await getFileContent(`${base}${pathstr}`);
 	//return;
 	if(contents !== false){
@@ -109,19 +109,14 @@ function handleContentRequest( res, req, base, mode = 1){
 
 
 	//if we're at this point it is safe to assume that the request is looking
-	//html content... I have 2 different servers that share this codebase ATM
-	//[see main.mjs] so one is the primary index for the main server the second
-	//is the other...
+	//html content...
 
 
-	if(mode == 1) {
-		url = "html/index.html";
-	}else{
-		url = "html/graph.html"
+	fetchHtml(res, "html/index.html");
 	return
 }
 
-export const File_utils = { 
+export const File_utils = {
 	getFileContent,
 	fetchHtml,
 	fetchJavaScript,

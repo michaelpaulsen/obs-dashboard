@@ -4,10 +4,6 @@ import {skc_settings} from "./modules/settings.mjs"
 import {skcUtils}from "./modules/util.mjs"
 import { File_utils} from "./modules/readFile.mjs";
 let base = `file://${import.meta.dirname}`;
-let mtg_stats = {
-	wins: 0,
-	losses : 0
-}
 
 async function changeText(res,target,  text) {
 	if(!await connect(res)){
@@ -29,18 +25,6 @@ async function changeText(res,target,  text) {
 		skcUtils.json_error(res, JSON.stringify(e));
 	}
 	return;
-}
-function mtg_update(res) {
-	let total = mtg_stats.wins + mtg_stats.losses;
-	let winpercent  = Math.round(100 * (100*(mtg_stats.wins/total)))/100;
-	let losspercent = 100 - winpercent;
-	let text = `${mtg_stats.wins}-${mtg_stats.losses} (${total})\n`;
-	text +=  `${winpercent}% - ${losspercent}%`
-	changeText(res,"wl text", text);
-	try {
-		res.writeHead(200,{"content-type" : "text/json"});
-		res.end(JSON.stringify(mtg_stats))
-	}catch(e){ };
 }
 //the OBS websocket connection object
 const obs = new OBSWebSocket();
@@ -253,26 +237,3 @@ createServer(async function (req, res) {
 }).on('connection', function(socket) {
 	socket.setTimeout(3000);
 }).listen(8080);
-
-
-createServer( (req,res)=> {
-	let search = req.url.split("?")[1];
-
-	//see the utils modual
-	let get = skcUtils.parseQueryString(search);
-
-	//is the top level subdir of the request
-	let subdir = req.url.split("/")[1];
-	let rurl = req.url;
-	if(subdir == "winlossState"){
-		res.writeHead(200,{"content-type" : "text/json"})
-		res.end(JSON.stringify(mtg_stats));
-		return;
-
-	}
-	try{
-		File_utils.handleContentRequest(res,req,base, 2);
-
-	} catch(e){ }
-	return;
-}).listen(8081);

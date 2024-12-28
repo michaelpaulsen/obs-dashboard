@@ -1,5 +1,3 @@
-let t, render=true;
-const PPBTN = $("#record_pause_btn");
 
 $("#btn_add_marker").on("click", () => {
 	$.get("/addMarker", (d) => {
@@ -24,41 +22,6 @@ $("#change_scene").on("click", () => {
 		method: "GET",
 	});
 
-});
-
-$("#wl_win").on("click", (e)=>{
-	$.ajax({
-		url: "/mtg_win",
-		success: (d) => {
-			printStats(d);
-			return;
-		},
-		method: "GET",
-	});
-
-});
-
-$("#wl_loss").on("click", (e)=>{
-	$.ajax({
-		url: "/mtg_loss",
-		success: (d) => {
-			printStats(d);
-			return;
-		},
-		method: "GET",
-	});
-
-})
-
-$("#wl_reset").on("click", (e)=>{
-	$.ajax({
-		url: "/mtg_reset",
-		success: (d) => {
-			printStats(d);
-			return;
-		},
-		method: "GET",
-	});
 });
 
 $("#refesh_scene_colection").on("click", (e)=> {
