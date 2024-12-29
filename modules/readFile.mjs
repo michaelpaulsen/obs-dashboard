@@ -26,6 +26,11 @@ async function fetchJavaScript(res, pathstr, base){
 	return;
 }
 export async function fetchHtml(res, pathstr, base ){
+	if(base === undefined) {
+		console.trace("no base passed to fetchHtml");
+		//if there's no base to add the req url to then we should give a trace
+		//so that it can be fixed.
+	}
 	let contents = await getFileContent(`${base}/${pathstr}`);
 	if(contents !== false){
 		try {
@@ -54,7 +59,7 @@ export async function fetchHtml(res, pathstr, base ){
 		res.write(contents)
 		res.end();
 	}catch(e){
-		console.error("e");
+		console.error(e);
 	}
 
 }
@@ -111,8 +116,7 @@ function handleContentRequest( res, req, base, mode = 1){
 	//if we're at this point it is safe to assume that the request is looking
 	//html content...
 
-
-	fetchHtml(res, "html/index.html");
+	fetchHtml(res, "html/index.html", base);
 	return
 }
 
