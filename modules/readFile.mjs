@@ -80,17 +80,10 @@ async function fetchCSS(res, pathstr, base){
 }
 
 
-function handleContentRequest( res, req, base, mode = 1){
+function handleContentRequest( res, req, base){
 	let url = req.url;
 	// if url is just a directory assume that they are looking for
 	//that dir's index page
-	if(req.url == "/") {
-		if(mode == 1) {
-			url = "html/index.html";
-		}else{
-			url = "html/graph.html"
-		}
-	}
 
 	let subdir = skcUtils.getSubDir(req);
 	//NOTE (skc) : this may throw? I used to have this in a try catch block...
