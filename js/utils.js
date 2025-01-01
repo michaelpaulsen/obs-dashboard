@@ -6,7 +6,10 @@ function makeID(str){
     }
     return str;
 }
-
+function read_checkBox(id){
+    return $(`${id}:checked`).val() !== undefined;
+    //NOTE (skc) : there *HAS* to be a better way of doing this
+}
 
 function UpdateSceneCollection() {
     $("#to_scene").empty();
