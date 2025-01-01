@@ -78,15 +78,31 @@ function make_marker_headers(output, marker_type, preamble){
 function updateMarkers(){
 	let output = $("#markers_output");
 	let preamble = $("#discription_preamble").val();
+
+    //the options
+    let show_recording = read_checkBox("#show_rec_time_codes_option");
+    let show_twitch    = read_checkBox("#show_tw_time_codes_option");
+    let show_longs     = read_checkBox("#show_longs_time_codes_option");
+    let show_shorts    = read_checkBox("#show_sorts_time_codes_option");
+
     output.empty();
-    make_marker_headers(output, "Twitch", preamble);
-    PrintMarkerData(output, "TwitchData");
-    make_marker_headers(output, "YT Long stream", preamble);
-    PrintMarkerData(output,"ytData");
-    make_marker_headers(output, "YT Shorts Stream", preamble);
-    PrintMarkerData(output,"ytVerticalStream");
-    make_marker_headers(output, "recording", preamble);
-    PrintMarkerData(output,"recordingData");
+    if(show_longs) {
+        make_marker_headers(output, "YT Long stream", preamble);
+        PrintMarkerData(output,"ytData");
+    }
+    if(show_shorts){
+        make_marker_headers(output, "YT Shorts Stream", preamble);
+        PrintMarkerData(output,"ytVerticalStream");
+    }
+    if(show_twitch ) {
+        make_marker_headers(output, "Twitch", preamble);
+        PrintMarkerData(output, "TwitchData");
+    }
+
+    if(show_recording) {
+        make_marker_headers(output, "recording", preamble);
+        PrintMarkerData(output,"recordingData");
+    }
 
 
 }
