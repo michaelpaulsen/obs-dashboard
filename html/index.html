@@ -4,7 +4,7 @@
 		<title>Skeleton_craft's OBS Websocket Utilities</title>
 		<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 		<style>
-		@import url("/css/main.css");
+			@import url("/css/main.css");
 		</style>
 	</head>
 	<body>
@@ -14,83 +14,77 @@
 			<div id="marker_maker_content">
 				<label for="discription">Marker Discription</label><br />
 				<input id="discription" />
-				<input type = "button" id="btn_add_marker" value ="Create Marker" />
+				<input type="button" id="btn_add_marker" value="Create Marker" />
 				<hr />
-
-
 				<input type="button" value="table mode" id="stream_marker_discription_table_toggle" class="toggle mode1">
 				<div id="discription_view">
-					<textarea cols = "60" id="markers_output" disabled> </textarea>
+					<textarea cols="60" id="markers_output" disabled> </textarea>
 				</div>
 				<div id="table_view" hidden>
-					<table id="markers" class="mono bold" >
+					<table id="markers" class="mono bold">
 						<thead>
 							<tr>
-<!-- TODO(skc): generate this table programatically... there's
-no reason to have it here if there's no makers -->
+								<!-- TODO(skc): generate this table programatically... there's
+	no reason to have it here if there's no makers -->
 								<td><span class="twitch">twitch</span> time code</td>
 								<td><span class="yt">youtube</span> time code</td>
 								<td>video time code</td>
 								<td>shorts stream time code</td>
 								<td>discription</td>
-								<td>action</td></tr>
+								<td>action</td>
+							</tr>
 						</thead>
 						<tbody>
 						</tbody>
 					</table>
-			</div>
-			<hr/>
-			<h3> options </h3>
-			<div>
-				<p>show recording
-					<input type="checkbox" id = "show_rec_time_codes_option"/>
-				</p>
-				<p>show twitch time codes
-					<input type="checkbox" id = "show_tw_time_codes_option"/>
-				</p>
-				<p>show Yt Longs Stream time codes
-				<input type="checkbox" id = "show_longs_time_codes_option"/>
-				</p>
-				<p>show Yt Shorts Stream time codes
-				<input type="checkbox" id = "show_shorts_time_codes_option"/>
-				</p>
-			</div>
-			<div hidden>
-			<p> tags</p>
-				<select id="tags_type">
-					<option value="GTNH"> GTNH </option>
-				</select>
-
-			</div>
-			<div>
-				<p class = "discription discription_preamble_text text" >
-				the preamble to the discription  </p>
-				<textarea id = "discription_preamble"></textarea> <br/>
-			</div>
-
+				</div>
+				<hr/>
+				<h3> options </h3>
+				<div>
+					<p>show recording
+						<input type="checkbox" id="show_rec_time_codes_option" />
+					</p>
+					<p>show twitch time codes
+						<input type="checkbox" id="show_tw_time_codes_option" />
+					</p>
+					<p>show Yt Longs Stream time codes
+						<input type="checkbox" id="show_longs_time_codes_option" />
+					</p>
+					<p>show Yt Shorts Stream time codes
+						<input type="checkbox" id="show_shorts_time_codes_option" />
+					</p>
+				</div>
+				<div hidden>
+					<p> tags</p>
+					<select id="tags_type">
+							<option value="GTNH"> GTNH </option>
+						</select>
+				</div>
+				<div>
+					<p class="discription discription_preamble_text text">
+						the preamble to the discription </p>
+					<textarea id="discription_preamble"></textarea> <br/>
+				</div>
 			</div>
 			<hr/>
 			<h3 id="scene_transiton_header">Automated Scene Transiton</h3>
 			<div id="scene_transiton_content">
 				<label for="to_scene"> Scene To Jump To </label><br />
 				<select id="to_scene"></select> <br/>
-				<input type="button" value="refesh scene colection" id="refesh_scene_colection"/>
-
+				<input type="button" value="refesh scene colection" id="refesh_scene_colection" />
 				<!--auto filled with your scene collections-->
 				<br />
 				<label for="reason"> Scene Text</label> <br />
 				<textarea id="reason">brb</textarea> <br />
-				<input type = "button" id="change_scene" value = "GO" />
+				<input type="button" id="change_scene" value="GO" />
 			</div>
 			<hr/>
 		</div>
-		 <script src="/js/utils.js"></script>
+		<script src="/js/utils.js"></script>
 		<script src="/js/StreamMarkers.js"></script>
-
 		<script src="/js/discription_view_toggle.js"></script>
 		<script src="/js/main.js"></script>
 		<script>
-
 		</script>
 	</body>
 </html>
