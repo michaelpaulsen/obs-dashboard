@@ -72,18 +72,22 @@ function makeMarkerTableRow(id, TwitchData, ytData, recordingData,
     marker_table_body.append(tr);
 
 }
-
+function make_marker_headers(output, marker_type, preamble){
+    output.append(`--${marker_type}--\n${preamble}\n`);
+}
 function updateMarkers(){
 	let output = $("#markers_output");
-	output.empty();
-    output.append("--Twitch--\n");
+	let preamble = $("#discription_preamble").val();
+    output.empty();
+    make_marker_headers(output, "Twitch", preamble);
     PrintMarkerData(output, "TwitchData");
-	output.append("--YT Long stream--\n");
+    make_marker_headers(output, "YT Long stream", preamble);
     PrintMarkerData(output,"ytData");
-    output.append("--YT Shorts Stream--\n");
+    make_marker_headers(output, "YT Shorts Stream", preamble);
     PrintMarkerData(output,"ytVerticalStream");
-    output.append("--recording--\n");
+    make_marker_headers(output, "recording", preamble);
     PrintMarkerData(output,"recordingData");
+
 
 }
 
