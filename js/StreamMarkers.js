@@ -26,11 +26,7 @@ function unduplicateMarkerIDs(notes) {
 
 //this is a small helper to make the table creation code more readable
 //SEE: addMarker [this document] =]
-function makeTimeCodeTableData( outterClass, innerClass, value){
-    let ret = `<td class = "${outterClass} data">`;
-    ret += `<input class = "${innerClass}" value = "${value}"/>`;
-    return ret + `</td>`;
-}
+
 
 //dispays the markers
 function PrintMarkerData(output, data_name) {
@@ -50,28 +46,7 @@ function PrintMarkerData(output, data_name) {
 	}
 
 }
-function makeMarkerTableRow(id, TwitchData, ytData, recordingData,
-                            ytVerticalStream, notes){
-    //NOTE: the for attribute technically can only be used on
-    //label elements however this is not going to break anything
-    let for_attr =`for ="${id}"`;
-    //this is the table row for the current marker
-    let tr = $(`<tr id="${id}">`);
-    //this is the remove button
-    let remove = `<input type="button" value = "X" ${for_attr} id = "${id}_remove" class ="remove_marker_btn remove bold">`;
-    //this is the modify button
-    let modify = `<input type="button" value = "C" ${for_attr} id = "${id}_modify" class ="modify_marker_btn modify bold">`;
-    //append everything to the table row for the current marker
-    tr.append(makeTimeCodeTableData("TwitchData", "twttc", TwitchData));
-    tr.append(makeTimeCodeTableData("ytData", "yttc", ytData));
-    tr.append(makeTimeCodeTableData("recordingData", "rectd", recordingData));
-    tr.append(makeTimeCodeTableData("ytVerticalStream", "vstreamData", ytVerticalStream));
-    tr.append(`<td class ="notes" ><input value ="${notes}"/></td>`)
-    tr.append(`<td>${remove}${modify}</td>`)
-    //append the current row to the table
-    marker_table_body.append(tr);
 
-}
 function make_marker_headers(output, marker_type, preamble){
     output.append(`--${marker_type}--\n${preamble}\n`);
 }
@@ -154,18 +129,14 @@ function addMarker(notes, d){
     //if you add an empty note then YT doesn't like it so
     //this sets a default note for the marker if there's not one already
     if(notes == "" || notes == " " ) notes = `misc ${++marker_misc_count}`;
-
     //TODO(skc): move this to its own function
     let deduped = unduplicateMarkerIDs(notes);
     let id = deduped.id;
     notes = deduped.notes;
-    console.log({id, notes})
-
     //create a markerObject and add it to the markers
     let marker = {TwitchData,ytData,recordingData, ytVerticalStream, notes};
     markers[id] = marker;
     makeMarkerTableRow(id, TwitchData, ytData, recordingData, ytVerticalStream, notes);
-
     //since we added a marker we need to update them.
     updateMarkers();
 }
@@ -176,26 +147,3 @@ function removeMarker(id){
 }
 
 
-marker_table_body.empty();
-$("#markers").on("click", ".remove_marker_btn", (e)=> {
-    let el = $(`#${e.target.id}`);
-    let target = el.attr("for");
-    removeMarker(target);
-    updateMarkers();
-})
-
-//update the markers when the marker's modify_marker_btn is clicked!
-//FIXME(skc): there has to be a better way to do this
-$("#markers").on("click" , ".modify_marker_btn", (e)=>{
-    let self = $(`#${e.target.id}`);
-    let target = self.attr("for");
-    let elements = self.parent().parent().children();
-    let mTarget = markers[target];
-    for(let elm  of elements){
-        let data_type = elm.classList[0];
-        if(elm.children[0] !== undefined){
-            mTarget[data_type] = elm.children[0].value;
-        }
-    }
-    updateMarkers();
-});

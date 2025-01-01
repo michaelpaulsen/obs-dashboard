@@ -81,10 +81,34 @@
 			<hr/>
 		</div>
 		<script src="/js/utils.js"></script>
+		<script src="/js/marker_table.js"></script>
 		<script src="/js/StreamMarkers.js"></script>
 		<script src="/js/discription_view_toggle.js"></script>
 		<script src="/js/main.js"></script>
 		<script>
+		$("#markers").on("click", ".remove_marker_btn", (e)=> {
+			let el = $(`#${e.target.id}`);
+			let target = el.attr("for");
+			removeMarker(target);
+			updateMarkers();
+		});
+
+//update the markers when the marker's modify_marker_btn is clicked!
+//FIXME(skc): there has to be a better way to do this
+
+		$("#markers").on("click" , ".modify_marker_btn", (e)=>{
+			let self = $(`#${e.target.id}`);
+			let target = self.attr("for");
+			let elements = self.parent().parent().children();
+			let mTarget = markers[target];
+			for(let elm  of elements){
+				let data_type = elm.classList[0];
+				if(elm.children[0] !== undefined){
+					mTarget[data_type] = elm.children[0].value;
+				}
+			}
+			updateMarkers();
+		});
 		</script>
 	</body>
 </html>
