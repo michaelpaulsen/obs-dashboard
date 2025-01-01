@@ -60,28 +60,20 @@ async function getTimeCodes(res, obs){
 	return tc;
 }
 async function connect(res){
-	if(connected)
-	 {
-		console.log('allready connected')
-		return true;
-	 }
 	try {
 
 		await obs.connect("ws://127.0.0.1:4455", skc_settings.OBS_PASSWORD, {
 			rpcVersion: 1,
 		});
-		connected =true;
 		return true;
 	} catch(e){
-
-		connected = false;
+		console.log(e);
 		skcUtils.json_error(res, `unable to connect to obs ${JSON.stringify(e).replace(/"/gm, "`")}`);
 		return false;
 	}
 }
 
 async function disconnect(){
-	connected = false;
 	await obs.disconnect();
 }
 
