@@ -1,38 +1,40 @@
 import { readFile } from "node:fs/promises";
 import { skcUtils } from "./util.mjs";
-async function getFileContent(u){
-	try{
+async function getFileContent(u) {
+	try {
 		let url = `${u}`;
 		const filePath = new URL(url, import.meta.url);
-		return  await readFile(filePath, { encoding: "utf8" });
-	}catch (e){
+		return await readFile(filePath, {
+			encoding: "utf8"
+		});
+	} catch (e) {
 		return false;
 	}
 
 }
-async function fetchJavaScript(res, pathstr, base){
+async function fetchJavaScript(res, pathstr, base) {
 	let contents = await getFileContent(`${base}${pathstr}`);
 	//return;
-	if(contents !== false){
+	if (contents !== false) {
 		res.writeHead(200, { "Content-Type": "text/javascript" });
 		res.write(contents);
 		res.end();
 		return;
 	}
-//	return;
-
-	res.writeHead(404, { "Content-Type": "text/plain" });
+	res.writeHead(404, {
+		"Content-Type": "text/plain"
+	});
 	res.end("unable to find javascript file");
 	return;
 }
-export async function fetchHtml(res, pathstr, base ){
-	if(base === undefined) {
+export async function fetchHtml(res, pathstr, base) {
+	if (base === undefined) {
 		console.trace("no base passed to fetchHtml");
 		//if there's no base to add the req url to then we should give a trace
 		//so that it can be fixed.
 	}
 	let contents = await getFileContent(`${base}/${pathstr}`);
-	if(contents !== false){
+	if (contents !== false) {
 		try {
 			res.writeHead(200, { "Content-Type": "text/html" });
 			res.write(contents);
@@ -42,7 +44,7 @@ export async function fetchHtml(res, pathstr, base ){
 
 		}
 	}
-	try{
+	try {
 
 		res.writeHead(404, { "Content-Type": "text/html" });
 		res.write("<html>");
@@ -55,32 +57,26 @@ export async function fetchHtml(res, pathstr, base ){
 		res.write("</body>");
 		res.write("</html>");
 		res.end();
-		res.writeHead(200, { "Content-Type": "text/html" });
-		res.write(contents)
-		res.end();
-	}catch(e){
+	} catch (e) {
 		console.error(e);
 	}
 
 }
-async function fetchCSS(res, pathstr, base){
+async function fetchCSS(res, pathstr, base) {
 	let contents = await getFileContent(`${base}${pathstr}`);
-	//return;
-	if(contents !== false){
+	if (contents !== false) {
 		res.writeHead(200, { "Content-Type": "text/css" });
 		res.write(contents);
 		res.end();
 		return;
 	}
-//	return;
-
 	res.writeHead(404, { "Content-Type": "text/plain" });
 	res.end("unable to find javascript file");
 	return;
 }
 
 
-function handleContentRequest( res, req, base){
+function handleContentRequest(res, req, base) {
 	let url = req.url;
 	// if url is just a directory assume that they are looking for
 	//that dir's index page
@@ -88,17 +84,17 @@ function handleContentRequest( res, req, base){
 	let subdir = skcUtils.getSubDir(req);
 	//NOTE (skc) : this may throw? I used to have this in a try catch block...
 	if (subdir == "js") {
-		File_utils.fetchJavaScript(res,`${url}`,base);
+		File_utils.fetchJavaScript(res, url, base);
 		return;
 	}
 
-	if(subdir == "css" || subdir == "style") {
+	if (subdir == "css" || subdir == "style") {
 		fetchCSS(res, url, base);
 		return;
 	}
 	//since this is a development enviroment this we are
 	//never returning content in this block
-	//TODO(skc): add favicon support
+	//TODO(skc) [#1]: add favicon support
 	if (req.url == "favicon.ico") {
 		res.writeHead(200, { "content-type": "image/icon" });
 		res.end();
@@ -108,7 +104,8 @@ function handleContentRequest( res, req, base){
 
 	//if we're at this point it is safe to assume that the request is looking
 	//html content...
-
+	//TODO (skc) : make this not just assume we want the html/index.html
+	//file...
 	fetchHtml(res, "html/index.html", base);
 	return
 }

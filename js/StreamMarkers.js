@@ -128,7 +128,6 @@ function addMarker(notes, d){
     //if you add an empty note then YT doesn't like it so
     //this sets a default note for the marker if there's not one already
     if(notes == "" || notes == " " ) notes = `misc ${++marker_misc_count}`;
-    //TODO(skc): move this to its own function
     let deduped = unduplicateMarkerIDs(notes);
     let id = deduped.id;
     notes = deduped.notes;
