@@ -58,7 +58,7 @@ function updateMarkers(){
     let show_recording = read_checkBox("#show_rec_time_codes_option");
     let show_twitch    = read_checkBox("#show_tw_time_codes_option");
     let show_longs     = read_checkBox("#show_longs_time_codes_option");
-    let show_shorts    = read_checkBox("#show_sorts_time_codes_option");
+    let show_shorts    = read_checkBox("#show_shorts_time_codes_option");
 
     output.empty();
     if(show_longs) {
