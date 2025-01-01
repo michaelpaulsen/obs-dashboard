@@ -1,5 +1,4 @@
 let markers = {};
-let marker_table_body = $("#markers tbody");
 let marker_misc_count = 0;
 let marker_max_markers_of_same_name = 10;
 

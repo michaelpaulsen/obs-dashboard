@@ -1,3 +1,4 @@
+let marker_table_body = $("#markers tbody");
 function makeTimeCodeTableData( outterClass, innerClass, value){
     let ret = `<td class = "${outterClass} data">`;
     ret += `<input class = "${innerClass}" value = "${value}"/>`;
@@ -26,4 +27,3 @@ function makeMarkerTableRow(id, TwitchData, ytData, recordingData,
     marker_table_body.append(tr);
 
 }
-marker_table_body.empty();
