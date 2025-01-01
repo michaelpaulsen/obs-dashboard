@@ -3,6 +3,27 @@ let marker_table_body = $("#markers tbody");
 let marker_misc_count = 0;
 let marker_max_markers_of_same_name = 10;
 
+function unduplicateMarkerIDs(notes) {
+    //The following code prevents duplicated notes by appending a number
+    //to the note if it already exists as a marker
+    //how I determin that is by checking if the key already exists
+    //in the marker object
+
+    let marker_names = Object.keys(markers);
+    let id = notes.replace(/\s/gm, "_").replace(/[^_A-Za-z\d]/gm, "");
+    let tid = id;
+    let itter = 0;
+    let resued_name = marker_names.includes(tid) ;
+    if(!resued_name) {
+        return {id:id,notes:notes};
+    }
+    while(marker_names.includes(tid)){
+        tid = `${id}_${++itter}`;
+    } //this may hang
+    return {id:tid,notes:`${notes} ${itter}`} ;
+
+}
+
 //this is a small helper to make the table creation code more readable
 //SEE: addMarker [this document] =]
 function makeTimeCodeTableData( outterClass, innerClass, value){
@@ -115,23 +136,10 @@ function addMarker(notes, d){
     if(notes == "" || notes == " " ) notes = `misc ${++marker_misc_count}`;
 
     //TODO(skc): move this to its own function
-
-    //NOTE: the following code prevents duplicated notes by appending a number
-    //to the note if it already exists as a marker
-    //how I determin that is by checking if the key already exists
-    //in the marker object
-    let marker_names = Object.keys(markers);
-    let id = notes.replace(/\s/gm, "_").replace(/[^_A-Za-z\d]/gm, "");
-    let tid = id;
-    let itter = 0;
-    let resued_name = marker_names.includes(tid) ;
-    if(resued_name) {
-        while(marker_names.includes(tid)){
-            tid = `${id}_${++itter}`;
-        } //this may hang
-        id = tid;
-        notes = `${notes} ${itter}`;
-    }
+    let deduped = unduplicateMarkerIDs(notes);
+    let id = deduped.id;
+    notes = deduped.notes;
+    console.log({id, notes})
 
     //create a markerObject and add it to the markers
     let marker = {TwitchData,ytData,recordingData, ytVerticalStream, notes};
