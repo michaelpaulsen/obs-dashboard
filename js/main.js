@@ -29,3 +29,6 @@ $("#refesh_scene_colection").on("click", (e)=> {
 });
 
 UpdateSceneCollection();
+$("#update_discription_box").on("click", e=>{ 
+	updateMarkers();
+}); 
